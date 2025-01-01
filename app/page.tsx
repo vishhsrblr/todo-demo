@@ -19,7 +19,7 @@ export default function TodoApp() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
-        <h1 className="text-3xl font-bold text-center text-gray-800">Minimalist Todo</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800">Minimalist Todo 123</h1>
         <div className="flex space-x-2">
           <Input
             type="text"
