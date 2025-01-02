@@ -6,32 +6,49 @@ import { Button } from "@/components/ui/button"
 import { PlusCircle } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
-// Define the Todo type
+// Define the Todo type without created_at
 interface Todo {
   id: string
   title: string
-  created_at?: string
 }
 
 export default function TodoApp() {
   const [tasks, setTasks] = useState<Todo[]>([])
   const [newTask, setNewTask] = useState("")
+  const [loading, setLoading] = useState(true)
 
-  // Fetch tasks on component mount
+  // Fetch tasks when component mounts
   useEffect(() => {
     fetchTasks()
   }, [])
 
   const fetchTasks = async () => {
-    const { data, error } = await supabase
-      .from('todos')
-      .select('*')
-      .order('created_at', { ascending: false })
-    
-    if (error) {
-      console.error('Error fetching tasks:', error)
-    } else {
+    try {
+      setLoading(true)
+      console.log('Starting to fetch tasks...')
+      
+      // Simplified query without created_at
+      const { data, error } = await supabase
+        .from('todos')
+        .select('id, title')
+
+      if (error) {
+        console.error('Fetch error:', error)
+        throw error
+      }
+
+      console.log('Fetched data:', data)
       setTasks(data || [])
+    } catch (error: any) {
+      console.error('Error details:', {
+        message: error?.message,
+        hint: error?.hint,
+        details: error?.details,
+        code: error?.code
+      })
+      alert('Error loading tasks! Check console for details.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -82,14 +99,20 @@ export default function TodoApp() {
           </Button>
         </div>
         <ul className="space-y-2">
-          {tasks.map((task) => (
-            <li
-              key={task.id}
-              className="p-3 bg-white rounded-lg shadow-sm border border-gray-200 transition-all hover:shadow-md"
-            >
-              {task.title}
-            </li>
-          ))}
+          {loading ? (
+            <p className="text-center text-gray-500">Loading tasks...</p>
+          ) : tasks.length === 0 ? (
+            <p className="text-center text-gray-500">No tasks yet. Add one above!</p>
+          ) : (
+            tasks.map((task) => (
+              <li
+                key={task.id}
+                className="p-3 bg-white rounded-lg shadow-sm border border-gray-200 transition-all hover:shadow-md"
+              >
+                {task.title}
+              </li>
+            ))
+          )}
         </ul>
       </div>
     </div>
