@@ -6,8 +6,15 @@ import { Button } from "@/components/ui/button"
 import { PlusCircle } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
+// Define the Todo type
+interface Todo {
+  id: string
+  title: string
+  created_at?: string
+}
+
 export default function TodoApp() {
-  const [tasks, setTasks] = useState<any[]>([])
+  const [tasks, setTasks] = useState<Todo[]>([])
   const [newTask, setNewTask] = useState("")
 
   // Fetch tasks on component mount
